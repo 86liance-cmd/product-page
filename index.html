@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>灵录 AI 智能录音笔 — 会思考的会议助手</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #171a22;
+    --border: #262b38;
+    --text: #e8eaf0;
+    --muted: #9aa3b5;
+    --accent: #5b8cff;
+    --accent2: #8f6bff;
+    --grad: linear-gradient(135deg, #5b8cff, #8f6bff);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+  /* 导航 */
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(15,17,23,.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .logo { font-size: 18px; font-weight: 700; letter-spacing: .5px; }
+  .logo span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { color: var(--muted); font-size: 14px; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+
+  /* Hero */
+  .hero { padding: 72px 0 56px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
+  .hero h1 { font-size: 40px; line-height: 1.25; margin-bottom: 16px; }
+  .hero h1 .g { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p.sub { color: var(--muted); font-size: 16px; margin-bottom: 28px; max-width: 480px; }
+  .cta { display: inline-flex; align-items: center; gap: 8px; padding: 13px 26px; border-radius: 10px; background: var(--grad); color: #fff; font-weight: 600; font-size: 15px; }
+  .cta.secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .hero-visual {
+    background: linear-gradient(160deg, #1b2130, #12141c);
+    border: 1px solid var(--border); border-radius: 20px;
+    padding: 40px 32px; display: flex; flex-direction: column; align-items: center; gap: 14px;
+  }
+  .device {
+    width: 120px; height: 220px; border-radius: 14px;
+    background: linear-gradient(180deg, #2a3348, #1a2030);
+    border: 1px solid #3a4560; position: relative;
+    box-shadow: 0 20px 40px rgba(0,0,0,.5);
+  }
+  .device::after {
+    content: ""; position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+    width: 36px; height: 36px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #4a5570, #232a3c);
+  }
+  .device::before {
+    content: ""; position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 8px; border-radius: 4px; background: #3a4560;
+  }
+  .tag { font-size: 12px; color: var(--muted); letter-spacing: 1px; }
+
+  /* 区块标题 */
+  .section { padding: 56px 0; }
+  .section-head { text-align: center; margin-bottom: 40px; }
+  .section-head h2 { font-size: 28px; margin-bottom: 10px; }
+  .section-head p { color: var(--muted); font-size: 15px; }
+
+  /* 功能特性 */
+  .features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .feature {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 24px; transition: transform .2s, border-color .2s;
+  }
+  .feature:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .feature .icon { font-size: 26px; margin-bottom: 12px; }
+  .feature h3 { font-size: 16px; margin-bottom: 8px; }
+  .feature p { color: var(--muted); font-size: 13.5px; }
+
+  /* 参数 */
+  .specs { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .spec-row { display: flex; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row .k { width: 140px; color: var(--muted); font-size: 14px; }
+  .spec-row .v { flex: 1; font-size: 14px; }
+
+  /* 底部 CTA */
+  .cta-section { text-align: center; padding: 64px 0; }
+  .cta-section h2 { font-size: 30px; margin-bottom: 14px; }
+  .cta-section p { color: var(--muted); margin-bottom: 26px; }
+
+  footer { border-top: 1px solid var(--border); padding: 24px 0; text-align: center; color: var(--muted); font-size: 13px; }
+
+  /* 响应式 */
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; gap: 32px; padding-top: 48px; }
+    .hero h1 { font-size: 30px; }
+    .features { grid-template-columns: repeat(2, 1fr); }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 480px) {
+    .features { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="logo">灵录<span> LingNote</span></div>
+    <nav class="nav-links">
+      <a href="#features">功能</a>
+      <a href="#specs">参数</a>
+      <a href="#buy">购买</a>
+    </nav>
+  </div>
+</header>
+
+<section class="wrap hero">
+  <div>
+    <h1>会思考的<br>AI 智能<span class="g">录音笔</span></h1>
+    <p class="sub">实时转写、智能降噪、多语言翻译。开会、上课、采访，一录即得，让每一段声音都变成可搜索的文字。</p>
+    <div class="btn-row">
+      <a class="cta" href="#buy">立即购买</a>
+      <a class="cta secondary" href="#features">了解更多</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="device"></div>
+    <span class="tag">灵录 LingNote Pro</span>
+  </div>
+</section>
+
+<section class="wrap section" id="features">
+  <div class="section-head">
+    <h2>核心功能</h2>
+    <p>为高效记录而生</p>
+  </div>
+  <div class="features">
+    <div class="feature">
+      <div class="icon">📝</div>
+      <h3>AI 实时转写</h3>
+      <p>边说边转文字，准确率高达 98%，支持普通话及多种方言。</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🎙️</div>
+      <h3>智能降噪</h3>
+      <p>AI 算法分离人声与环境噪音，嘈杂环境下依然清晰。</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🌐</div>
+      <h3>多语言翻译</h3>
+      <p>支持 30+ 语言实时互译，跨语言沟通不再有障碍。</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🔋</div>
+      <h3>超长续航</h3>
+      <p>一次充电连续录音 20 小时，重要场合不断电。</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap section" id="specs">
+  <div class="section-head">
+    <h2>产品参数</h2>
+  </div>
+  <div class="specs">
+    <div class="spec-row"><div class="k">型号</div><div class="v">LingNote Pro</div></div>
+    <div class="spec-row"><div class="k">存储容量</div><div class="v">32GB（约 120 小时录音）</div></div>
+    <div class="spec-row"><div class="k">续航时间</div><div class="v">连续录音 20 小时</div></div>
+    <div class="spec-row"><div class="k">转写引擎</div><div class="v">云端 AI 大模型实时转写</div></div>
+    <div class="spec-row"><div class="k">连接方式</div><div class="v">蓝牙 5.3 / Type-C</div></div>
+    <div class="spec-row"><div class="k">支持语言</div><div class="v">30+ 语言实时互译</div></div>
+  </div>
+</section>
+
+<section class="wrap cta-section" id="buy">
+  <h2>让记录更简单</h2>
+  <p>现在下单，立享首发优惠价 ¥499</p>
+  <a class="cta" href="#">立即购买</a>
+</section>
+
+<footer>
+  <div class="wrap">© 2026 灵录 LingNote · 本页面为商品介绍演示页</div>
+</footer>
+
+</body>
+</html>
